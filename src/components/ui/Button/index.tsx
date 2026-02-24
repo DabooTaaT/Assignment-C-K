@@ -12,6 +12,7 @@ export const Button = forwardRef<HTMLButtonElement, AppButtonProps>(
     <MuiButton
       ref={ref}
       disabled={loading || disabled}
+      aria-busy={loading ? true : undefined}
       startIcon={loading ? <CircularProgress size={16} color="inherit" /> : startIcon}
       {...props}
     >
