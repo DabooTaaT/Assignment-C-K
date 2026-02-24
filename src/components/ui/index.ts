@@ -17,11 +17,13 @@ export {
 } from "./Form";
 
 export { Card, CardContent, CardHeader, CardActions } from "./Card";
+export type { CardProps, CardContentProps, CardHeaderProps, CardActionsProps } from "./Card";
 
 export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";
 
 export { Select, SelectItem, SelectFormControl, SelectLabel } from "./Select";
+export type { SelectProps, SelectItemProps, SelectFormControlProps, SelectLabelProps } from "./Select";
 
 export {
   Dialog,
@@ -30,6 +32,7 @@ export {
   DialogContentText,
   DialogActions,
 } from "./Dialog";
+export type { DialogProps, DialogTitleProps, DialogContentProps, DialogContentTextProps, DialogActionsProps } from "./Dialog";
 
 export {
   Table,
@@ -40,5 +43,7 @@ export {
   TableRow,
   TableFooter,
 } from "./Table";
+export type { TableProps, TableBodyProps, TableCellProps, TableContainerProps, TableHeadProps, TableRowProps, TableFooterProps } from "./Table";
 
 export { Label } from "./Label";
+export type { FormLabelProps as LabelProps } from "./Label";

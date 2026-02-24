@@ -5,6 +5,8 @@ import MuiCardContent, { type CardContentProps } from "@mui/material/CardContent
 import MuiCardHeader, { type CardHeaderProps } from "@mui/material/CardHeader";
 import MuiCardActions, { type CardActionsProps } from "@mui/material/CardActions";
 
+export type { CardProps, CardContentProps, CardHeaderProps, CardActionsProps };
+
 export const Card = React.forwardRef<HTMLDivElement, CardProps>((props, ref) => (
   <MuiCard ref={ref} {...props} />
 ));
