@@ -1,22 +1,36 @@
 import { onError } from "@apollo/client/link/error";
 import { clearAuthToken } from "./authLink";
 
-export const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, extensions }) => {
-      console.error(`[GraphQL error] Operation: ${operation.operationName} - ${message}`);
+type MaybeApolloError = {
+  message?: string;
+  statusCode?: number;
+  errors?: Array<{
+    message?: string;
+    extensions?: {
+      code?: string;
+    };
+  }>;
+};
 
-      if (
-        extensions?.code === "UNAUTHENTICATED" ||
-        (networkError && "statusCode" in networkError && networkError.statusCode === 401)
-      ) {
-        clearAuthToken();
-        window.location.href = "/login";
-      }
-    });
+export const errorLink = onError(({ error, operation }) => {
+  const apolloError = error as MaybeApolloError | undefined;
+  const graphQLErrors = apolloError?.errors ?? [];
+  const isUnauthorized =
+    apolloError?.statusCode === 401 ||
+    graphQLErrors.some((gqlError) => gqlError.extensions?.code === "UNAUTHENTICATED");
+
+  graphQLErrors.forEach((gqlError) => {
+    console.error(
+      `[GraphQL error] Operation: ${operation.operationName} - ${gqlError.message ?? "Unknown error"}`
+    );
+  });
+
+  if (isUnauthorized) {
+    clearAuthToken();
+    window.location.href = "/login";
   }
 
-  if (networkError) {
-    console.error(`[Network error] ${networkError.message}`);
+  if (apolloError?.message) {
+    console.error(`[Network error] ${apolloError.message}`);
   }
 });

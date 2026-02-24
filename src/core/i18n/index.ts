@@ -9,10 +9,10 @@ import thAuth from "./locales/th/auth.json";
 
 const i18n = createInstance();
 const LanguageDetector =
-  (LanguageDetectorModule as unknown as { default?: unknown }).default ??
-  LanguageDetectorModule;
-const unwrap = <T,>(mod: T | { default: T }): T =>
-  ((mod as { default?: T }).default ?? mod) as T;
+  ((LanguageDetectorModule as { default?: unknown }).default ??
+    LanguageDetectorModule) as unknown as Parameters<typeof i18n.use>[0];
+const unwrap = <T,>(mod: T | { default: T } | undefined): T =>
+  ((mod as { default?: T } | undefined)?.default ?? (mod as T));
 
 i18n.use(LanguageDetector).use(initReactI18next).init({
   resources: {

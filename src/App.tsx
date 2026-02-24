@@ -1,5 +1,5 @@
 import { RouterProvider } from "react-router-dom";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import { apolloClient } from "@/core/network";
 import { router } from "@/core/router";
 import "@/core/i18n";
