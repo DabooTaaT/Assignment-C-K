@@ -161,26 +161,35 @@ src/
 │   ├── layout/
 │   │   └── AppLayout.tsx     # Root layout: ErrorBoundary + Outlet
 │   └── ui/                   # MUI wrappers (never import MUI directly — use @/components/ui)
-│       ├── index.ts          # Barrel export — only import from here
+│       ├── index.ts          # Top-level barrel — import from here or from component subfolder
 │       ├── Badge/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Badge)
 │       │   └── Badge.tsx     # MUI Chip wrapper (label/pill style)
 │       ├── Button/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Button)
 │       │   ├── Button.tsx    # MUI Button wrapper (adds loading prop + aria-busy)
 │       │   └── Button.test.tsx
 │       ├── Card/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Card)
 │       │   └── Card.tsx      # MUI Card + CardContent + CardHeader + CardActions
 │       ├── Dialog/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Dialog)
 │       │   └── Dialog.tsx    # MUI Dialog + sub-components
 │       ├── Form/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Form)
 │       │   └── Form.tsx      # react-hook-form + MUI FormControl/FormLabel/FormHelperText
 │       ├── Input/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Input)
 │       │   ├── Input.tsx     # MUI TextField wrapper
 │       │   └── Input.test.tsx
 │       ├── Label/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Label)
 │       │   └── Label.tsx     # MUI FormLabel
 │       ├── Select/
+│       │   ├── index.ts      # Re-export barrel (enables @/components/ui/Select)
 │       │   └── Select.tsx    # MUI Select + MenuItem + FormControl + InputLabel
 │       └── Table/
+│           ├── index.ts      # Re-export barrel (enables @/components/ui/Table)
 │           └── Table.tsx     # MUI Table + sub-components
 │
 ├── lib/
@@ -233,7 +242,16 @@ Every feature follows the same four-file pattern:
 ### Shared UI — MUI Wrappers
 **Rule:** Never import from `@mui/material` directly. Always import from `@/components/ui`.
 
-Each component folder contains only `ComponentName.tsx` — the wrapper that exposes MUI's native prop API.
+Each component folder has two files:
+- `ComponentName.tsx` — the wrapper that exposes MUI's native prop API
+- `index.ts` — re-export barrel enabling direct subfolder imports
+
+Two import styles are supported:
+```ts
+import { Button } from "@/components/ui";          // top-level barrel
+import { Button } from "@/components/ui/Button";   // subfolder barrel
+```
+
 The MUI theme is driven by Tailwind CSS variables via `src/core/theme/index.ts`, so both systems share one palette.
 
 Badge maps to MUI `Chip` (not MUI `Badge` which is a notification-dot component).
@@ -279,7 +297,7 @@ Test files sit alongside the code they test (`*.test.ts` / `*.test.tsx`).
 ## Key Conventions
 
 - **Path alias:** `@/` maps to `src/` — use it everywhere instead of relative paths.
-- **MUI imports:** Always via `@/components/ui` barrel, never direct. Each component folder has `ComponentName.tsx` wrapping the MUI component (e.g. `Button/Button.tsx`).
+- **MUI imports:** Never from `@mui/material` directly. Use `@/components/ui` (top-level) or `@/components/ui/Button` (subfolder). Each folder has `ComponentName.tsx` (wrapper) + `index.ts` (re-export).
 - **Controller = hooks:** Feature business logic lives in `controller.ts` as custom hooks.
 - **Interface = types:** Feature-scoped TypeScript types live in `interface.ts`.
 - **Views = sub-components:** Reusable pieces inside a feature page live in `views/`.
