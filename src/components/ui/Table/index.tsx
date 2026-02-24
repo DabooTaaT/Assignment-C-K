@@ -7,4 +7,4 @@ export {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table-shadcn";
+} from "./table";

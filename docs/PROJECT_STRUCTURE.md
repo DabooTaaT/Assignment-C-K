@@ -160,33 +160,33 @@ src/
 │   └── ui/                   # shadcn/ui wrappers (never import shadcn directly)
 │       ├── index.ts          # Barrel export — only import from here
 │       ├── Badge/
-│       │   ├── Badge.tsx     # Wrapper
-│       │   └── badge-shadcn.tsx  # Raw shadcn source
+│       │   ├── index.tsx     # Wrapper
+│       │   └── badge.tsx     # Raw shadcn source
 │       ├── Button/
-│       │   ├── Button.tsx    # Wrapper (adds loading prop + spinner)
+│       │   ├── index.tsx     # Wrapper (adds loading prop + spinner)
 │       │   ├── Button.test.tsx
-│       │   └── button-shadcn.tsx
+│       │   └── button.tsx    # Raw shadcn source
 │       ├── Card/
-│       │   ├── index.tsx     # Wrapper (index.tsx avoids macOS case conflict)
+│       │   ├── index.tsx     # Wrapper
 │       │   └── card.tsx      # Raw shadcn source
 │       ├── Dialog/
-│       │   ├── Dialog.tsx
-│       │   └── dialog-shadcn.tsx
+│       │   ├── index.tsx     # Wrapper
+│       │   └── dialog.tsx    # Raw shadcn source
 │       ├── Form/
-│       │   ├── Form.tsx
-│       │   └── form-shadcn.tsx
+│       │   ├── index.tsx     # Wrapper
+│       │   └── form.tsx      # Raw shadcn source
 │       ├── Input/
-│       │   ├── Input.tsx
+│       │   ├── index.tsx     # Wrapper
 │       │   ├── Input.test.tsx
-│       │   └── input-shadcn.tsx
+│       │   └── input.tsx     # Raw shadcn source
 │       ├── Label/
-│       │   └── label.tsx
+│       │   └── label.tsx     # Raw shadcn source (no wrapper needed)
 │       ├── Select/
-│       │   ├── Select.tsx
-│       │   └── select-shadcn.tsx
+│       │   ├── index.tsx     # Wrapper
+│       │   └── select.tsx    # Raw shadcn source
 │       └── Table/
-│           ├── Table.tsx
-│           └── table-shadcn.tsx
+│           ├── index.tsx     # Wrapper
+│           └── table.tsx     # Raw shadcn source
 │
 ├── lib/
 │   └── utils.ts              # cn() — clsx + tailwind-merge
@@ -237,7 +237,12 @@ Every feature follows the same four-file pattern:
 
 ### Shared UI — shadcn/ui Wrappers
 **Rule:** Never import from shadcn directly. Always import from `@/components/ui`.
-Each wrapper file (e.g. `Button.tsx`) re-exports from its `-shadcn.tsx` counterpart, allowing us to extend or swap the underlying implementation without touching feature code.
+
+Each component folder contains two files:
+- `index.tsx` — the wrapper (extend behavior here, e.g. adding a `loading` prop to Button)
+- `component.tsx` — raw shadcn source (treat as read-only)
+
+Using `index.tsx` as the wrapper avoids macOS case-insensitive filesystem conflicts (e.g. `Button/` can safely contain `button.tsx` because `index.tsx ≠ button.tsx`).
 
 ---
 
@@ -280,7 +285,7 @@ Test files sit alongside the code they test (`*.test.ts` / `*.test.tsx`).
 ## Key Conventions
 
 - **Path alias:** `@/` maps to `src/` — use it everywhere instead of relative paths.
-- **shadcn imports:** Always via wrapper in `@/components/ui`, never direct.
+- **shadcn imports:** Always via `@/components/ui` barrel, never direct. Each component folder has `index.tsx` (wrapper) + `component.tsx` (raw shadcn).
 - **Controller = hooks:** Feature business logic lives in `controller.ts` as custom hooks.
 - **Interface = types:** Feature-scoped TypeScript types live in `interface.ts`.
 - **Views = sub-components:** Reusable pieces inside a feature page live in `views/`.

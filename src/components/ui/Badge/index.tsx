@@ -1,7 +1,7 @@
 import {
   Badge as ShadcnBadge,
   type BadgeProps,
-} from "./badge-shadcn";
+} from "./badge";
 
 export type { BadgeProps };
 export const Badge = ShadcnBadge;

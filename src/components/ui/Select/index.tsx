@@ -7,4 +7,4 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "./select-shadcn";
+} from "./select";
