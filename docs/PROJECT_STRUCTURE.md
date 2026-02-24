@@ -177,7 +177,7 @@ src/
 │       │   ├── index.tsx     # MUI TextField wrapper
 │       │   └── Input.test.tsx
 │       ├── Label/
-│       │   └── label.tsx     # MUI FormLabel
+│       │   └── index.tsx     # MUI FormLabel
 │       ├── Select/
 │       │   └── index.tsx     # MUI Select + MenuItem + FormControl + InputLabel
 │       └── Table/

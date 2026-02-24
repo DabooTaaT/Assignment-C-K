@@ -41,4 +41,4 @@ export {
   TableFooter,
 } from "./Table";
 
-export { Label } from "./Label/label";
+export { Label } from "./Label";
