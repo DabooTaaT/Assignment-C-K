@@ -1,3 +1,4 @@
+// src/components/ui/Button/Button.test.tsx
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Button } from "@/components/ui";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui";
 describe("Button", () => {
   it("renders children", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole("button", { name: "Click me" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /click me/i })).toBeInTheDocument();
   });
 
   it("calls onClick when clicked", async () => {
@@ -23,5 +24,11 @@ describe("Button", () => {
   it("is disabled when disabled prop is true", () => {
     render(<Button disabled>Submit</Button>);
     expect(screen.getByRole("button")).toBeDisabled();
+  });
+
+  it("shows spinner when loading", () => {
+    render(<Button loading>Submit</Button>);
+    // MUI renders CircularProgress as an svg role="progressbar"
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 });

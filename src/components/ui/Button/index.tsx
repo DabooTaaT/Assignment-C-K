@@ -1,27 +1,23 @@
+// src/components/ui/Button/index.tsx
 import { forwardRef } from "react";
-import {
-  Button as ShadcnButton,
-  type ButtonProps,
-} from "./button";
+import MuiButton, { type ButtonProps } from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export interface AppButtonProps extends ButtonProps {
   loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, AppButtonProps>(
-  ({ loading, disabled, children, ...props }, ref) => {
-    return (
-      <ShadcnButton ref={ref} disabled={loading || disabled} {...props}>
-        {loading ? (
-          <span
-            className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-            aria-hidden="true"
-          />
-        ) : null}
-        {children}
-      </ShadcnButton>
-    );
-  }
+  ({ loading, disabled, children, startIcon, ...props }, ref) => (
+    <MuiButton
+      ref={ref}
+      disabled={loading || disabled}
+      startIcon={loading ? <CircularProgress size={16} color="inherit" /> : startIcon}
+      {...props}
+    >
+      {children}
+    </MuiButton>
+  )
 );
 
 Button.displayName = "Button";
