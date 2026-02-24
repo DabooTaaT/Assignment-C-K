@@ -4,9 +4,9 @@
 
 **Goal:** Scaffold a production-ready React + TypeScript customer-facing web app with layered architecture (Network → Data → Model → Controller → View), Apollo GraphQL, MSW mocks, i18next (en/th), React Router v6, shadcn component wrappers, and Jest testing.
 
-**Architecture:** Feature-based MVC where each feature owns its View (components), Controller (hooks), and Model (services). Shared infrastructure lives in `src/core/` (network, data, i18n, router, middleware). All shadcn primitives are accessed only through wrapper components in `src/components/ui/`.
+**Architecture:** Feature-based MVC where each feature owns its View (components), Controller (hooks), and Model (services). Shared infrastructure lives in `src/core/` (network, data, i18n, router, middleware). All shadcn primitives are accessed only through wrapper components in `src/components/ui/`. The `cn` utility lives at `src/lib/utils.ts` (shadcn's canonical location) — import as `@/lib/utils` everywhere.
 
-**Tech Stack:** React 18, TypeScript, Vite, Apollo Client, MSW v2, shadcn/ui, Tailwind CSS, i18next, React Router v6, Jest + ts-jest + React Testing Library
+**Tech Stack:** React 18, TypeScript, Vite, Apollo Client, MSW v2, shadcn/ui, Tailwind CSS, i18next, React Router v6, Jest + ts-jest + React Testing Library, react-hook-form
 
 ---
 
@@ -43,6 +43,7 @@ npm install \
   @apollo/client graphql \
   i18next react-i18next i18next-browser-languagedetector \
   msw@2 \
+  react-hook-form @hookform/resolvers \
   clsx tailwind-merge
 ```
 
@@ -57,7 +58,7 @@ npm install -D \
   @types/node
 ```
 
-**Step 5: Install shadcn peer requirement (class-variance-authority + lucide)**
+**Step 5: Install shadcn peer requirements**
 
 ```bash
 npm install class-variance-authority lucide-react @radix-ui/react-slot
@@ -72,7 +73,7 @@ npx tailwindcss init -p
 **Step 7: Verify node_modules installed**
 
 ```bash
-npm ls react-router-dom @apollo/client i18next msw jest --depth=0
+npm ls react-router-dom @apollo/client i18next msw react-hook-form jest --depth=0
 ```
 
 Expected: all packages listed with their versions, no errors.
@@ -94,6 +95,8 @@ git commit -m "chore: init vite react-ts project and install dependencies"
 
 **Step 1: Create `.gitignore`**
 
+> Note: `.env` (non-sensitive defaults) is NOT ignored — it is committed to the repo. Only `.env.local` and `.env.*.local` (secrets) are ignored.
+
 Create file `.gitignore`:
 
 ```
@@ -104,8 +107,7 @@ node_modules/
 dist/
 build/
 
-# Environment files
-.env
+# Environment secrets (non-secret .env IS committed)
 .env.local
 .env.*.local
 
@@ -154,13 +156,14 @@ Feature-based MVC. See `docs/plans/2026-02-24-react-project-design.md`.
 
 ### Import Rules
 - Use `@/` path alias for all src imports (e.g. `import { Button } from "@/components/ui/Button"`)
+- Use `@/lib/utils` for the `cn` utility — NOT `@/utils/cn`
 - NEVER import from `shadcn/ui` or `@radix-ui` directly in features
 - NEVER import from `src/core/network/` directly in features — use hooks/services
 
 ### Testing
 - Tests co-located: `MyComponent.test.tsx` next to `MyComponent.tsx`
 - Run tests: `npm test`
-- Run with coverage: `npm test -- --coverage`
+- Run with coverage: `npm run test:coverage`
 
 ### Mock Data
 - Enable MSW: set `VITE_USE_MSW=true` in `.env.local`
@@ -175,7 +178,7 @@ Feature-based MVC. See `docs/plans/2026-02-24-react-project-design.md`.
 - `npm run dev` — start dev server
 - `npm run build` — production build
 - `npm test` — run Jest tests
-- `npm run lint` — ESLint
+- `npm run test:coverage` — run tests with coverage report
 ```
 
 **Step 3: Commit**
@@ -195,7 +198,7 @@ git commit -m "chore: add .gitignore and CLAUDE.md with project conventions"
 
 **Step 1: Update `tsconfig.json`** — add `baseUrl` and `paths`:
 
-Replace the `compilerOptions` block with:
+Replace the full file content with:
 
 ```json
 {
@@ -282,7 +285,6 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {},
     },
   },
   plugins: [],
@@ -359,7 +361,7 @@ export default {
 npm run dev
 ```
 
-Expected: Vite dev server starts, no CSS errors in console.
+Expected: Vite dev server starts on port 5173, no CSS errors in console.
 
 **Step 4: Commit**
 
@@ -373,10 +375,12 @@ git commit -m "chore: configure Tailwind CSS with shadcn CSS variables"
 ## Task 5: Install and Configure shadcn/ui
 
 **Files:**
-- Create: `components.json` (shadcn config)
-- Create: `src/lib/utils.ts` (shadcn's cn utility)
+- Create: `components.json`
+- Create: `src/lib/utils.ts`
 
-**Step 1: Create `components.json`** (shadcn config — avoids interactive CLI):
+**Step 1: Create `components.json`**
+
+> The `aliases.utils` points to `@/lib/utils` — this is where shadcn puts its `cn` utility and where all project code should import `cn` from.
 
 ```json
 {
@@ -398,24 +402,7 @@ git commit -m "chore: configure Tailwind CSS with shadcn CSS variables"
 }
 ```
 
-**Step 2: Create `src/lib/utils.ts`**
-
-```typescript
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-```
-
-**Step 3: Create `src/utils/cn.ts`** (project-level alias — keeps imports consistent with `@/utils/cn`):
-
-```typescript
-export { cn } from "@/lib/utils";
-```
-
-**Step 4: Add shadcn Button component via CLI**
+**Step 2: Add shadcn components via CLI**
 
 ```bash
 npx shadcn@latest add button input select dialog form card badge table
@@ -423,20 +410,22 @@ npx shadcn@latest add button input select dialog form card badge table
 
 When prompted about overwriting files, select **Yes**.
 
-This creates files under `src/components/ui/button.tsx`, etc. (lowercase — these are the shadcn internals).
+This creates: `src/lib/utils.ts` (the `cn` function) and `src/components/ui/button.tsx`, `input.tsx`, etc. (lowercase — shadcn internals).
 
-**Step 5: Verify shadcn components were added**
+**Step 3: Verify shadcn components and utils were added**
 
 ```bash
-ls src/components/ui/
+ls src/components/ui/ && ls src/lib/
 ```
 
-Expected: `button.tsx input.tsx select.tsx dialog.tsx form.tsx card.tsx badge.tsx table.tsx`
+Expected:
+- `src/components/ui/`: `button.tsx  input.tsx  select.tsx  dialog.tsx  form.tsx  card.tsx  badge.tsx  table.tsx`
+- `src/lib/`: `utils.ts`
 
-**Step 6: Commit**
+**Step 4: Commit**
 
 ```bash
-git add components.json src/lib/ src/utils/ src/components/ui/
+git add components.json src/lib/ src/components/ui/
 git commit -m "chore: configure shadcn/ui and add base components"
 ```
 
@@ -447,8 +436,17 @@ git commit -m "chore: configure shadcn/ui and add base components"
 **Files:**
 - Create: `jest.config.ts`
 - Create: `jest.setup.ts`
+- Create: `__mocks__/fileMock.ts`
 
-**Step 1: Create `jest.config.ts`**
+**Step 1: Create `__mocks__/fileMock.ts`** (stub for non-JS imports like images/CSS):
+
+```typescript
+export default "test-file-stub";
+```
+
+**Step 2: Create `jest.config.ts`**
+
+> Critical: the correct Jest option is `setupFilesAfterEnv` — not `setupFilesAfterFramework`.
 
 ```typescript
 import type { Config } from "jest";
@@ -456,7 +454,7 @@ import type { Config } from "jest";
 const config: Config = {
   preset: "ts-jest",
   testEnvironment: "jsdom",
-  setupFilesAfterFramework: ["<rootDir>/jest.setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
     "\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.ts",
@@ -493,21 +491,13 @@ const config: Config = {
 export default config;
 ```
 
-**Step 2: Create `__mocks__/fileMock.ts`**
-
-```typescript
-export default "test-file-stub";
-```
-
-**Step 3: Create `jest.setup.ts`**
+**Step 3: Create `jest.setup.ts`** (MSW wiring added in Task 9 after MSW is configured):
 
 ```typescript
 import "@testing-library/jest-dom";
 ```
 
-> Note: MSW server setup will be added to `jest.setup.ts` in Task 9 after MSW is configured.
-
-**Step 4: Add test script to `package.json`**
+**Step 4: Add test scripts to `package.json`**
 
 Open `package.json` and add to the `"scripts"` section:
 
@@ -517,12 +507,12 @@ Open `package.json` and add to the `"scripts"` section:
 "test:coverage": "jest --coverage"
 ```
 
-**Step 5: Write a smoke test to verify Jest works**
+**Step 5: Write smoke test for cn utility**
 
-Create `src/utils/cn.test.ts`:
+Create `src/lib/utils.test.ts`:
 
 ```typescript
-import { cn } from "@/utils/cn";
+import { cn } from "@/lib/utils";
 
 describe("cn utility", () => {
   it("merges class names", () => {
@@ -542,7 +532,7 @@ describe("cn utility", () => {
 **Step 6: Run the smoke test**
 
 ```bash
-npm test src/utils/cn.test.ts
+npm test src/lib/utils.test.ts
 ```
 
 Expected: PASS — 3 tests passing.
@@ -550,8 +540,8 @@ Expected: PASS — 3 tests passing.
 **Step 7: Commit**
 
 ```bash
-git add jest.config.ts jest.setup.ts __mocks__/ package.json src/utils/cn.test.ts
-git commit -m "chore: add Jest configuration, setup file, and cn utility tests"
+git add jest.config.ts jest.setup.ts __mocks__/ package.json src/lib/utils.test.ts
+git commit -m "chore: add Jest configuration with setupFilesAfterEnv and cn utility tests"
 ```
 
 ---
@@ -559,7 +549,7 @@ git commit -m "chore: add Jest configuration, setup file, and cn utility tests"
 ## Task 7: Scaffold Folder Structure
 
 **Files:**
-- Create: directory tree with `.gitkeep` placeholders
+- Create: directory tree
 
 **Step 1: Create all directories**
 
@@ -569,6 +559,10 @@ mkdir -p \
   src/features/auth/hooks \
   src/features/auth/services \
   src/features/auth/types \
+  src/features/home/components \
+  src/features/dashboard/components \
+  src/features/profile/components \
+  src/features/notFound/components \
   src/core/network/links \
   src/core/data/mocks/handlers \
   src/core/data/repositories \
@@ -576,8 +570,8 @@ mkdir -p \
   src/core/i18n/locales/th \
   src/core/router/guards \
   src/core/middleware \
-  src/types \
-  src/utils
+  src/components/layout \
+  src/types
 ```
 
 **Step 2: Verify structure**
@@ -600,15 +594,17 @@ git commit -m "chore: scaffold feature-based MVC folder structure"
 ## Task 8: Create Shared UI Component Wrappers
 
 **Files:**
-- Create: `src/components/ui/Button.tsx`
-- Create: `src/components/ui/Button.test.tsx`
-- Create: `src/components/ui/Input.tsx`
-- Create: `src/components/ui/Input.test.tsx`
+- Create: `src/components/ui/Button.tsx` + `Button.test.tsx`
+- Create: `src/components/ui/Input.tsx` + `Input.test.tsx`
+- Create: `src/components/ui/Form.tsx`
 - Create: `src/components/ui/Card.tsx`
 - Create: `src/components/ui/Badge.tsx`
+- Create: `src/components/ui/Select.tsx`
+- Create: `src/components/ui/Dialog.tsx`
+- Create: `src/components/ui/Table.tsx`
 - Create: `src/components/ui/index.ts`
 
-> These files wrap the shadcn lowercase files (`button.tsx`, `input.tsx`, etc.) and are the ONLY files features should import from.
+> **Rule:** No feature code imports from shadcn's lowercase files (`button.tsx`, `input.tsx`, etc.) or from `@radix-ui`. All imports go through these PascalCase wrappers.
 
 **Step 1: Write failing test for Button wrapper**
 
@@ -734,7 +730,29 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 Input.displayName = "Input";
 ```
 
-**Step 7: Create remaining wrappers (no tests needed for pure pass-throughs)**
+**Step 7: Run Input test to verify it passes**
+
+```bash
+npm test src/components/ui/Input.test.tsx
+```
+
+Expected: PASS — 2 tests passing.
+
+**Step 8: Create remaining wrappers**
+
+Create `src/components/ui/Form.tsx`:
+
+```tsx
+export {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+```
 
 Create `src/components/ui/Card.tsx`:
 
@@ -749,7 +767,6 @@ import {
 } from "@/components/ui/card";
 
 export { CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
-
 export const Card = ShadcnCard;
 ```
 
@@ -809,20 +826,23 @@ export {
 } from "@/components/ui/table";
 ```
 
-**Step 8: Create barrel export `src/components/ui/index.ts`**
+**Step 9: Create barrel export `src/components/ui/index.ts`**
 
 ```typescript
 export { Button } from "./Button";
 export type { AppButtonProps } from "./Button";
 export { Input } from "./Input";
+export type { InputProps } from "./Input";
+export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./Form";
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./Card";
 export { Badge } from "./Badge";
+export type { BadgeProps } from "./Badge";
 export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./Select";
 export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./Dialog";
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./Table";
 ```
 
-**Step 9: Run all wrapper tests**
+**Step 10: Run all wrapper tests**
 
 ```bash
 npm test src/components/ui/
@@ -830,11 +850,11 @@ npm test src/components/ui/
 
 Expected: PASS — all tests passing.
 
-**Step 10: Commit**
+**Step 11: Commit**
 
 ```bash
 git add src/components/ui/
-git commit -m "feat: add shadcn component wrappers — Button, Input, Card, Badge, Select, Dialog, Table"
+git commit -m "feat: add shadcn component wrappers — Button, Input, Form, Card, Badge, Select, Dialog, Table"
 ```
 
 ---
@@ -842,9 +862,10 @@ git commit -m "feat: add shadcn component wrappers — Button, Input, Card, Badg
 ## Task 9: Configure MSW (Mock Service Worker)
 
 **Files:**
-- Create: `src/core/data/mocks/browser.ts`
-- Create: `src/core/data/mocks/handlers/index.ts`
 - Create: `src/core/data/mocks/handlers/auth.ts`
+- Create: `src/core/data/mocks/handlers/index.ts`
+- Create: `src/core/data/mocks/browser.ts`
+- Create: `src/core/data/mocks/server.ts`
 - Modify: `jest.setup.ts`
 
 **Step 1: Generate MSW service worker to `public/`**
@@ -855,7 +876,7 @@ npx msw init public/ --save
 
 Expected: `public/mockServiceWorker.js` created.
 
-**Step 2: Create auth MSW handler**
+**Step 2: Create auth MSW handlers**
 
 Create `src/core/data/mocks/handlers/auth.ts`:
 
@@ -910,7 +931,7 @@ import { authHandlers } from "./auth";
 export const handlers = [...authHandlers];
 ```
 
-**Step 4: Create browser MSW worker**
+**Step 4: Create browser MSW worker** (used in Vite dev server)
 
 Create `src/core/data/mocks/browser.ts`:
 
@@ -921,7 +942,7 @@ import { handlers } from "./handlers";
 export const worker = setupWorker(...handlers);
 ```
 
-**Step 5: Create server for Jest (Node environment)**
+**Step 5: Create Node server** (used by Jest)
 
 Create `src/core/data/mocks/server.ts`:
 
@@ -932,7 +953,7 @@ import { handlers } from "./handlers";
 export const server = setupServer(...handlers);
 ```
 
-**Step 6: Update `jest.setup.ts`** to wire in MSW server:
+**Step 6: Update `jest.setup.ts`** to wire MSW server lifecycle into Jest:
 
 ```typescript
 import "@testing-library/jest-dom";
@@ -943,65 +964,15 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 ```
 
-**Step 7: Write test to verify MSW handler works**
-
-Create `src/core/data/mocks/handlers/auth.test.ts`:
-
-```typescript
-import { server } from "@/core/data/mocks/server";
-import { graphql, HttpResponse } from "msw";
-
-describe("auth MSW handlers", () => {
-  it("returns mock token for valid credentials", async () => {
-    // server already has authHandlers via jest.setup.ts
-    const response = await fetch("/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `mutation Login($email: String!, $password: String!) {
-          login(email: $email, password: $password) {
-            token
-          }
-        }`,
-        variables: { email: "test@example.com", password: "password" },
-      }),
-    });
-
-    const json = await response.json();
-    expect(json.data.login.token).toBe("mock-jwt-token");
-  });
-
-  it("allows overriding handlers per test", async () => {
-    server.use(
-      graphql.mutation("Login", () =>
-        HttpResponse.json({ errors: [{ message: "Server error" }] })
-      )
-    );
-
-    const response = await fetch("/graphql", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: `mutation Login($email: String!, $password: String!) { login(email: $email, password: $password) { token } }`,
-        variables: { email: "test@example.com", password: "password" },
-      }),
-    });
-
-    const json = await response.json();
-    expect(json.errors[0].message).toBe("Server error");
-  });
-});
-```
-
-**Step 8: Run MSW tests**
+**Step 7: Verify MSW wiring by running existing tests**
 
 ```bash
-npm test src/core/data/mocks/
+npm test
 ```
 
-Expected: PASS.
+Expected: all existing tests still pass. MSW server starts/stops correctly around each test file.
 
-**Step 9: Commit**
+**Step 8: Commit**
 
 ```bash
 git add public/mockServiceWorker.js src/core/data/mocks/ jest.setup.ts package.json
@@ -1013,31 +984,60 @@ git commit -m "feat: configure MSW v2 with auth handlers and Jest server integra
 ## Task 10: Configure Apollo Client + Links (Network Layer)
 
 **Files:**
-- Create: `src/core/network/links/authLink.ts`
+- Create: `.env`
+- Create: `src/core/network/links/authLink.ts` + `authLink.test.ts`
 - Create: `src/core/network/links/errorLink.ts`
 - Create: `src/core/network/links/index.ts`
 - Create: `src/core/network/apolloClient.ts`
 - Create: `src/core/network/index.ts`
-- Create: `src/core/network/apolloClient.test.ts`
 
-**Step 1: Create `.env` and `.env.local`**
-
-Create `.env`:
+**Step 1: Create `.env`** (committed — contains non-sensitive defaults only)
 
 ```
 VITE_GRAPHQL_URL=http://localhost:4000/graphql
 VITE_USE_MSW=false
 ```
 
-Create `.env.local` (for local dev with mocks):
+Create `.env.local` (NOT committed — developer's local overrides):
 
 ```
 VITE_USE_MSW=true
 ```
 
-Add `.env.local` to `.gitignore` (already done in Task 2).
+**Step 2: Write failing test for authLink helpers**
 
-**Step 2: Create `src/core/network/links/authLink.ts`**
+Create `src/core/network/links/authLink.test.ts`:
+
+```typescript
+import { setAuthToken, clearAuthToken } from "@/core/network/links/authLink";
+
+describe("authLink token helpers", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("setAuthToken stores token in localStorage", () => {
+    setAuthToken("abc123");
+    expect(localStorage.getItem("auth_token")).toBe("abc123");
+  });
+
+  it("clearAuthToken removes token from localStorage", () => {
+    localStorage.setItem("auth_token", "abc123");
+    clearAuthToken();
+    expect(localStorage.getItem("auth_token")).toBeNull();
+  });
+});
+```
+
+**Step 3: Run to verify it fails**
+
+```bash
+npm test src/core/network/links/authLink.test.ts
+```
+
+Expected: FAIL — "Cannot find module"
+
+**Step 4: Create `src/core/network/links/authLink.ts`**
 
 ```typescript
 import { ApolloLink } from "@apollo/client";
@@ -1066,7 +1066,15 @@ export const clearAuthToken = () => {
 };
 ```
 
-**Step 3: Create `src/core/network/links/errorLink.ts`**
+**Step 5: Run test to verify it passes**
+
+```bash
+npm test src/core/network/links/authLink.test.ts
+```
+
+Expected: PASS — 2 tests passing.
+
+**Step 6: Create `src/core/network/links/errorLink.ts`**
 
 ```typescript
 import { onError } from "@apollo/client/link/error";
@@ -1077,10 +1085,7 @@ export const errorLink = onError(({ graphQLErrors, networkError, operation }) =>
     graphQLErrors.forEach(({ message, extensions }) => {
       console.error(`[GraphQL error] Operation: ${operation.operationName} — ${message}`);
 
-      if (
-        extensions?.code === "UNAUTHENTICATED" ||
-        (networkError && "statusCode" in networkError && networkError.statusCode === 401)
-      ) {
+      if (extensions?.code === "UNAUTHENTICATED") {
         clearAuthToken();
         window.location.href = "/login";
       }
@@ -1089,18 +1094,23 @@ export const errorLink = onError(({ graphQLErrors, networkError, operation }) =>
 
   if (networkError) {
     console.error(`[Network error] ${networkError.message}`);
+
+    if ("statusCode" in networkError && networkError.statusCode === 401) {
+      clearAuthToken();
+      window.location.href = "/login";
+    }
   }
 });
 ```
 
-**Step 4: Create `src/core/network/links/index.ts`**
+**Step 7: Create `src/core/network/links/index.ts`**
 
 ```typescript
 export { authLink, setAuthToken, clearAuthToken } from "./authLink";
 export { errorLink } from "./errorLink";
 ```
 
-**Step 5: Create `src/core/network/apolloClient.ts`**
+**Step 8: Create `src/core/network/apolloClient.ts`**
 
 ```typescript
 import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
@@ -1120,47 +1130,22 @@ export const apolloClient = new ApolloClient({
 });
 ```
 
-**Step 6: Create `src/core/network/index.ts`**
+**Step 9: Create `src/core/network/index.ts`**
 
 ```typescript
 export { apolloClient } from "./apolloClient";
 export { setAuthToken, clearAuthToken } from "./links";
 ```
 
-**Step 7: Write unit tests for authLink**
-
-Create `src/core/network/links/authLink.test.ts`:
-
-```typescript
-import { setAuthToken, clearAuthToken } from "@/core/network/links/authLink";
-
-describe("authLink helpers", () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  it("setAuthToken stores token in localStorage", () => {
-    setAuthToken("abc123");
-    expect(localStorage.getItem("auth_token")).toBe("abc123");
-  });
-
-  it("clearAuthToken removes token from localStorage", () => {
-    localStorage.setItem("auth_token", "abc123");
-    clearAuthToken();
-    expect(localStorage.getItem("auth_token")).toBeNull();
-  });
-});
-```
-
-**Step 8: Run network tests**
+**Step 10: Run all network tests**
 
 ```bash
 npm test src/core/network/
 ```
 
-Expected: PASS.
+Expected: PASS — 2 tests passing.
 
-**Step 9: Commit**
+**Step 11: Commit**
 
 ```bash
 git add src/core/network/ .env
@@ -1192,17 +1177,17 @@ describe("i18n configuration", () => {
     expect(i18n.language).toBe("en");
   });
 
-  it("translates common.appName in English", async () => {
+  it("translates common:appName in English", async () => {
     await i18n.changeLanguage("en");
     expect(i18n.t("common:appName")).toBe("My App");
   });
 
-  it("translates common.appName in Thai", async () => {
+  it("translates common:appName in Thai", async () => {
     await i18n.changeLanguage("th");
     expect(i18n.t("common:appName")).toBe("แอปของฉัน");
   });
 
-  it("translates auth.loginTitle in English", async () => {
+  it("translates auth:loginTitle in English", async () => {
     await i18n.changeLanguage("en");
     expect(i18n.t("auth:loginTitle")).toBe("Sign In");
   });
@@ -1306,19 +1291,13 @@ i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: {
-        common: enCommon,
-        auth: enAuth,
-      },
-      th: {
-        common: thCommon,
-        auth: thAuth,
-      },
+      en: { common: enCommon, auth: enAuth },
+      th: { common: thCommon, auth: thAuth },
     },
     fallbackLng: "en",
     defaultNS: "common",
     interpolation: {
-      escapeValue: false, // React already escapes
+      escapeValue: false,
     },
     detection: {
       order: ["localStorage", "navigator"],
@@ -1365,7 +1344,6 @@ const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
   return <div>No error</div>;
 };
 
-// Suppress console.error for expected errors in tests
 beforeEach(() => {
   jest.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -1489,13 +1467,20 @@ git commit -m "feat: add global ErrorBoundary with custom fallback support"
 
 ---
 
-## Task 13: Create Router + Auth Guard
+## Task 13: Create Router + Auth Guard + Page Placeholders
 
 **Files:**
 - Create: `src/core/router/routes.ts`
-- Create: `src/core/router/guards/RequireAuth.tsx`
-- Create: `src/core/router/guards/RequireAuth.test.tsx`
+- Create: `src/core/router/guards/RequireAuth.tsx` + `RequireAuth.test.tsx`
 - Create: `src/core/router/index.tsx`
+- Create: `src/features/auth/hooks/useAuth.ts`
+- Create: `src/features/auth/components/LoginPage.tsx`
+- Create: `src/features/auth/components/RegisterPage.tsx`
+- Create: `src/features/home/components/HomePage.tsx`
+- Create: `src/features/dashboard/components/DashboardPage.tsx`
+- Create: `src/features/profile/components/ProfilePage.tsx`
+- Create: `src/features/notFound/components/NotFoundPage.tsx`
+- Create: `src/components/layout/AppLayout.tsx`
 
 **Step 1: Create route constants**
 
@@ -1520,7 +1505,6 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/core/router/guards/RequireAuth";
 
-// Mock useAuth hook
 jest.mock("@/features/auth/hooks/useAuth", () => ({
   useAuth: jest.fn(),
 }));
@@ -1531,7 +1515,7 @@ const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const ProtectedPage = () => <div>Protected content</div>;
 
 const renderWithRouter = (isAuthenticated: boolean) => {
-  mockUseAuth.mockReturnValue({ isAuthenticated } as ReturnType<typeof useAuth>);
+  mockUseAuth.mockReturnValue({ isAuthenticated, token: null });
 
   return render(
     <MemoryRouter initialEntries={["/dashboard"]}>
@@ -1567,12 +1551,9 @@ npm test src/core/router/guards/RequireAuth.test.tsx
 
 Expected: FAIL — module not found errors.
 
-**Step 4: Create stub `useAuth` hook** (will be completed in auth feature task)
-
-Create `src/features/auth/hooks/useAuth.ts`:
+**Step 4: Create `src/features/auth/hooks/useAuth.ts`** (stub — expanded when auth feature is built)
 
 ```typescript
-// Stub — full implementation added when auth feature is built
 export interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
@@ -1608,7 +1589,7 @@ npm test src/core/router/guards/RequireAuth.test.tsx
 
 Expected: PASS — 2 tests passing.
 
-**Step 7: Create page placeholders**
+**Step 7: Create page placeholder components**
 
 Create `src/features/auth/components/LoginPage.tsx`:
 
@@ -1632,40 +1613,25 @@ export const RegisterPage = () => {
 };
 ```
 
-Create `src/components/layout/AppLayout.tsx`:
-
-```tsx
-import { Outlet } from "react-router-dom";
-import { ErrorBoundary } from "@/core/middleware/ErrorBoundary";
-
-export const AppLayout = () => (
-  <ErrorBoundary>
-    <Outlet />
-  </ErrorBoundary>
-);
-```
-
-Create placeholder pages:
-
-`src/features/home/components/HomePage.tsx`:
+Create `src/features/home/components/HomePage.tsx`:
 
 ```tsx
 export const HomePage = () => <div>Home</div>;
 ```
 
-`src/features/dashboard/components/DashboardPage.tsx`:
+Create `src/features/dashboard/components/DashboardPage.tsx`:
 
 ```tsx
 export const DashboardPage = () => <div>Dashboard</div>;
 ```
 
-`src/features/profile/components/ProfilePage.tsx`:
+Create `src/features/profile/components/ProfilePage.tsx`:
 
 ```tsx
 export const ProfilePage = () => <div>Profile</div>;
 ```
 
-`src/components/ui/NotFoundPage.tsx`:
+Create `src/features/notFound/components/NotFoundPage.tsx`:
 
 ```tsx
 import { useTranslation } from "react-i18next";
@@ -1688,6 +1654,19 @@ export const NotFoundPage = () => {
 };
 ```
 
+Create `src/components/layout/AppLayout.tsx`:
+
+```tsx
+import { Outlet } from "react-router-dom";
+import { ErrorBoundary } from "@/core/middleware/ErrorBoundary";
+
+export const AppLayout = () => (
+  <ErrorBoundary>
+    <Outlet />
+  </ErrorBoundary>
+);
+```
+
 **Step 8: Create `src/core/router/index.tsx`**
 
 ```tsx
@@ -1700,7 +1679,7 @@ import { LoginPage } from "@/features/auth/components/LoginPage";
 import { RegisterPage } from "@/features/auth/components/RegisterPage";
 import { DashboardPage } from "@/features/dashboard/components/DashboardPage";
 import { ProfilePage } from "@/features/profile/components/ProfilePage";
-import { NotFoundPage } from "@/components/ui/NotFoundPage";
+import { NotFoundPage } from "@/features/notFound/components/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -1725,8 +1704,8 @@ export const router = createBrowserRouter([
 **Step 9: Commit**
 
 ```bash
-git add src/core/router/ src/features/ src/components/layout/ src/components/ui/NotFoundPage.tsx
-git commit -m "feat: add React Router v6 with auth guard and route definitions"
+git add src/core/router/ src/features/ src/components/layout/
+git commit -m "feat: add React Router v6 with auth guard, route constants, and page placeholders"
 ```
 
 ---
@@ -1744,7 +1723,7 @@ import { RouterProvider } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/core/network";
 import { router } from "@/core/router";
-import "@/core/i18n"; // Initialize i18next
+import "@/core/i18n";
 
 function App() {
   return (
@@ -1768,9 +1747,7 @@ import "./index.css";
 async function bootstrap() {
   if (import.meta.env.VITE_USE_MSW === "true") {
     const { worker } = await import("./core/data/mocks/browser");
-    await worker.start({
-      onUnhandledRequest: "warn",
-    });
+    await worker.start({ onUnhandledRequest: "warn" });
   }
 
   ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -1783,7 +1760,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-**Step 3: Delete boilerplate files from Vite scaffold**
+**Step 3: Delete Vite boilerplate files**
 
 ```bash
 rm src/App.css src/assets/react.svg
@@ -1795,7 +1772,7 @@ rm src/App.css src/assets/react.svg
 npm run dev
 ```
 
-Open browser at `http://localhost:5173`. Expected: blank page with no console errors (Home page renders `<div>Home</div>`).
+Open browser at `http://localhost:5173`. Expected: page loads with no console errors.
 
 **Step 5: Run all tests**
 
@@ -1819,12 +1796,12 @@ git commit -m "feat: wire ApolloProvider, RouterProvider, i18n, and MSW bootstra
 **Step 1: Run full test suite with coverage**
 
 ```bash
-npm test -- --coverage
+npm run test:coverage
 ```
 
-Expected: all tests pass, coverage report generated in `coverage/`.
+Expected: all tests pass, coverage report in `coverage/`.
 
-**Step 2: Run TypeScript type check**
+**Step 2: TypeScript type check**
 
 ```bash
 npx tsc --noEmit
@@ -1832,59 +1809,92 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-**Step 3: Run production build**
+**Step 3: Production build**
 
 ```bash
 npm run build
 ```
 
-Expected: `dist/` folder created, no build errors.
+Expected: `dist/` created, no build errors.
 
 **Step 4: Final commit**
 
 ```bash
-git add -A
 git status
 ```
 
-Review — confirm no `.env.local` or sensitive files are staged, then:
+Review — confirm no `.env.local` is staged, then:
 
 ```bash
-git commit -m "chore: final project scaffold verification — all tests pass, build succeeds"
+git add -A
+git commit -m "chore: final project scaffold — all tests pass, TypeScript clean, build succeeds"
 ```
 
 ---
 
-## Summary of Files Created
+## Summary of All Files
 
 | File | Purpose |
 |---|---|
-| `jest.config.ts` | Jest configuration with ts-jest and jsdom |
-| `jest.setup.ts` | Testing library DOM matchers + MSW server |
-| `.gitignore` | Standard Node + Vite ignores |
+| `.gitignore` | Ignores `node_modules`, `dist`, `.env.local`, coverage |
 | `CLAUDE.md` | Project conventions for Claude |
-| `src/utils/cn.ts` | Tailwind class merge utility |
-| `src/lib/utils.ts` | shadcn's cn utility (internal) |
-| `src/components/ui/Button.tsx` | Wrapped shadcn Button with loading state |
+| `components.json` | shadcn/ui config (aliases utils to `@/lib/utils`) |
+| `jest.config.ts` | Jest with ts-jest, jsdom, `setupFilesAfterEnv` |
+| `jest.setup.ts` | jest-dom matchers + MSW server lifecycle |
+| `__mocks__/fileMock.ts` | Stub for CSS/image imports in Jest |
+| `src/lib/utils.ts` | `cn` utility — generated by shadcn CLI, imported as `@/lib/utils` |
+| `src/lib/utils.test.ts` | Tests for cn utility |
+| `src/components/ui/Button.tsx` | Wrapped shadcn Button with `loading` prop |
 | `src/components/ui/Input.tsx` | Wrapped shadcn Input |
-| `src/components/ui/Card.tsx` | Wrapped shadcn Card |
+| `src/components/ui/Form.tsx` | Wrapped shadcn Form + FormField etc. |
+| `src/components/ui/Card.tsx` | Wrapped shadcn Card + sub-components |
 | `src/components/ui/Badge.tsx` | Wrapped shadcn Badge |
-| `src/components/ui/Select.tsx` | Wrapped shadcn Select |
-| `src/components/ui/Dialog.tsx` | Wrapped shadcn Dialog |
-| `src/components/ui/Table.tsx` | Wrapped shadcn Table |
-| `src/components/ui/index.ts` | Barrel export for all wrappers |
-| `src/components/layout/AppLayout.tsx` | Root layout with ErrorBoundary |
-| `src/core/network/apolloClient.ts` | Apollo Client instance |
-| `src/core/network/links/authLink.ts` | Injects auth headers + token helpers |
-| `src/core/network/links/errorLink.ts` | Error handling + auto-logout |
-| `src/core/data/mocks/browser.ts` | MSW browser worker |
-| `src/core/data/mocks/server.ts` | MSW Node server (for Jest) |
+| `src/components/ui/Select.tsx` | Wrapped shadcn Select + sub-components |
+| `src/components/ui/Dialog.tsx` | Wrapped shadcn Dialog + sub-components |
+| `src/components/ui/Table.tsx` | Wrapped shadcn Table + sub-components |
+| `src/components/ui/index.ts` | Barrel export — the only import path for features |
+| `src/components/layout/AppLayout.tsx` | Root layout wrapping Outlet in ErrorBoundary |
+| `src/core/network/apolloClient.ts` | Apollo Client with link chain |
+| `src/core/network/links/authLink.ts` | Injects auth headers; exposes token helpers |
+| `src/core/network/links/errorLink.ts` | Handles GraphQL/network errors, auto-logout |
+| `src/core/network/links/index.ts` | Re-exports all links |
+| `src/core/network/index.ts` | Public API of the network layer |
+| `src/core/data/mocks/browser.ts` | MSW browser worker (Vite dev server) |
+| `src/core/data/mocks/server.ts` | MSW Node server (Jest) |
 | `src/core/data/mocks/handlers/auth.ts` | Auth GraphQL mock handlers |
-| `src/core/i18n/index.ts` | i18next configuration |
-| `src/core/i18n/locales/en/*.json` | English translations |
-| `src/core/i18n/locales/th/*.json` | Thai translations |
+| `src/core/data/mocks/handlers/index.ts` | Combines all handlers |
+| `src/core/i18n/index.ts` | i18next config with en + th |
+| `src/core/i18n/locales/en/common.json` | English shared strings |
+| `src/core/i18n/locales/en/auth.json` | English auth strings |
+| `src/core/i18n/locales/th/common.json` | Thai shared strings |
+| `src/core/i18n/locales/th/auth.json` | Thai auth strings |
 | `src/core/router/index.tsx` | createBrowserRouter with all routes |
 | `src/core/router/routes.ts` | Route path constants |
-| `src/core/router/guards/RequireAuth.tsx` | Auth guard component |
-| `src/core/middleware/ErrorBoundary.tsx` | Global React error boundary |
+| `src/core/router/guards/RequireAuth.tsx` | Auth guard — redirects unauthenticated users |
+| `src/core/middleware/ErrorBoundary.tsx` | React class component error boundary |
 | `src/features/auth/hooks/useAuth.ts` | Auth state hook (stub) |
+| `src/features/auth/components/LoginPage.tsx` | Login page placeholder |
+| `src/features/auth/components/RegisterPage.tsx` | Register page placeholder |
+| `src/features/home/components/HomePage.tsx` | Home page placeholder |
+| `src/features/dashboard/components/DashboardPage.tsx` | Dashboard placeholder |
+| `src/features/profile/components/ProfilePage.tsx` | Profile placeholder |
+| `src/features/notFound/components/NotFoundPage.tsx` | 404 page |
+
+## What Was Removed vs Original Plan
+
+| Removed | Why |
+|---|---|
+| `src/utils/cn.ts` | Redundant re-export of `src/lib/utils.ts`. Use `@/lib/utils` directly |
+| `src/components/ui/NotFoundPage.tsx` | Wrong location — moved to `src/features/notFound/components/NotFoundPage.tsx` |
+| `src/core/data/mocks/handlers/auth.test.ts` (raw fetch) | MSW graphql handlers cannot be tested via relative `fetch()` in Node/Jest — test them through consuming components instead |
+
+## Bugs Fixed vs Original Plan
+
+| Bug | Fix |
+|---|---|
+| `setupFilesAfterFramework` (invalid key) | Corrected to `setupFilesAfterEnv` |
+| `.env` in `.gitignore` | Removed — `.env` with non-sensitive defaults is committed; only `.env.local` is ignored |
+| Missing `react-hook-form` + `@hookform/resolvers` | Added to Task 1 dependencies |
+| `apolloClient.test.ts` listed but never created | Removed from Files list; authLink helpers tested instead |
+| `mkdir` missing 6 directories | All feature + layout directories added to Task 7 |
+| `Form.tsx` wrapper missing | Added to Task 8 with barrel export |
