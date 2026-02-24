@@ -1,4 +1,4 @@
-// src/components/ui/Button/index.tsx
+// src/components/ui/Button/Button.tsx
 import { forwardRef } from "react";
 import MuiButton, { type ButtonProps } from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";

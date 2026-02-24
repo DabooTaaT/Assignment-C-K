@@ -1,4 +1,4 @@
-// src/components/ui/Card/index.tsx
+// src/components/ui/Card/Card.tsx
 import React from "react";
 import MuiCard, { type CardProps } from "@mui/material/Card";
 import MuiCardContent, { type CardContentProps } from "@mui/material/CardContent";

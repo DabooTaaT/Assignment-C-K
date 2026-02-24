@@ -1,4 +1,4 @@
-// src/components/ui/Dialog/index.tsx
+// src/components/ui/Dialog/Dialog.tsx
 export { default as Dialog } from "@mui/material/Dialog";
 export type { DialogProps } from "@mui/material/Dialog";
 

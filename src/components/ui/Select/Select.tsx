@@ -1,4 +1,4 @@
-// src/components/ui/Select/index.tsx
+// src/components/ui/Select/Select.tsx
 export { default as Select } from "@mui/material/Select";
 export type { SelectProps } from "@mui/material/Select";
 

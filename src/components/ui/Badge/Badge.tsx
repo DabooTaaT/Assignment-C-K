@@ -1,4 +1,4 @@
-// src/components/ui/Badge/index.tsx
+// src/components/ui/Badge/Badge.tsx
 import React from "react";
 import MuiChip, { type ChipProps } from "@mui/material/Chip";
 

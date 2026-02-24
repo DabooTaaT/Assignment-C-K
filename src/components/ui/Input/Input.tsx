@@ -1,4 +1,4 @@
-// src/components/ui/Input/index.tsx
+// src/components/ui/Input/Input.tsx
 import { forwardRef } from "react";
 import MuiTextField, { type TextFieldProps } from "@mui/material/TextField";
 

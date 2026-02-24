@@ -1,4 +1,4 @@
-// src/components/ui/Label/index.tsx
+// src/components/ui/Label/Label.tsx
 import React from "react";
 import MuiFormLabel, { type FormLabelProps } from "@mui/material/FormLabel";
 

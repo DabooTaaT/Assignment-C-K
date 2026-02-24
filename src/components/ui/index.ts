@@ -1,9 +1,9 @@
 // src/components/ui/index.ts
-export { Button } from "./Button";
-export type { AppButtonProps } from "./Button";
+export { Button } from "./Button/Button";
+export type { AppButtonProps } from "./Button/Button";
 
-export { Input } from "./Input";
-export type { InputProps } from "./Input";
+export { Input } from "./Input/Input";
+export type { InputProps } from "./Input/Input";
 
 export {
   Form,
@@ -14,16 +14,16 @@ export {
   FormMessage,
   FormField,
   useFormField,
-} from "./Form";
+} from "./Form/Form";
 
-export { Card, CardContent, CardHeader, CardActions } from "./Card";
-export type { CardProps, CardContentProps, CardHeaderProps, CardActionsProps } from "./Card";
+export { Card, CardContent, CardHeader, CardActions } from "./Card/Card";
+export type { CardProps, CardContentProps, CardHeaderProps, CardActionsProps } from "./Card/Card";
 
-export { Badge } from "./Badge";
-export type { BadgeProps } from "./Badge";
+export { Badge } from "./Badge/Badge";
+export type { BadgeProps } from "./Badge/Badge";
 
-export { Select, SelectItem, SelectFormControl, SelectLabel } from "./Select";
-export type { SelectProps, SelectItemProps, SelectFormControlProps, SelectLabelProps } from "./Select";
+export { Select, SelectItem, SelectFormControl, SelectLabel } from "./Select/Select";
+export type { SelectProps, SelectItemProps, SelectFormControlProps, SelectLabelProps } from "./Select/Select";
 
 export {
   Dialog,
@@ -31,8 +31,8 @@ export {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from "./Dialog";
-export type { DialogProps, DialogTitleProps, DialogContentProps, DialogContentTextProps, DialogActionsProps } from "./Dialog";
+} from "./Dialog/Dialog";
+export type { DialogProps, DialogTitleProps, DialogContentProps, DialogContentTextProps, DialogActionsProps } from "./Dialog/Dialog";
 
 export {
   Table,
@@ -42,8 +42,8 @@ export {
   TableHead,
   TableRow,
   TableFooter,
-} from "./Table";
-export type { TableProps, TableBodyProps, TableCellProps, TableContainerProps, TableHeadProps, TableRowProps, TableFooterProps } from "./Table";
+} from "./Table/Table";
+export type { TableProps, TableBodyProps, TableCellProps, TableContainerProps, TableHeadProps, TableRowProps, TableFooterProps } from "./Table/Table";
 
-export { Label } from "./Label";
-export type { FormLabelProps as LabelProps } from "./Label";
+export { Label } from "./Label/Label";
+export type { FormLabelProps as LabelProps } from "./Label/Label";

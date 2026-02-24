@@ -1,4 +1,4 @@
-// src/components/ui/Table/index.tsx
+// src/components/ui/Table/Table.tsx
 export { default as Table } from "@mui/material/Table";
 export type { TableProps } from "@mui/material/Table";
 
