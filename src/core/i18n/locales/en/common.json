@@ -1,0 +1,12 @@
+{
+  "appName": "My App",
+  "loading": "Loading...",
+  "error": "Something went wrong",
+  "retry": "Try again",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "back": "Back",
+  "notFound": "Page not found"
+}
