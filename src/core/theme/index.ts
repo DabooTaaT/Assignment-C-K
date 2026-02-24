@@ -2,22 +2,27 @@
 import { createTheme } from "@mui/material/styles";
 
 /** Convert Tailwind's space-separated HSL ("222.2 47.4% 11.2%") to "hsl(222.2, 47.4%, 11.2%)" */
-function cssVar(name: string): string {
+function cssVar(name: string, fallback = "#000"): string {
   const raw = getComputedStyle(document.documentElement)
     .getPropertyValue(name)
     .trim();
-  const [h, s, l] = raw.split(" ");
+  if (!raw) return fallback;
+  const parts = raw.split(/\s+/);
+  if (parts.length < 3) return fallback;
+  const [h, s, l] = parts;
   return `hsl(${h}, ${s}, ${l})`;
 }
 
-/** Convert --radius ("0.5rem") to px number using document base font size */
+/** Convert --radius to px number; supports both rem and px values */
 function cssVarRadius(): number {
   const raw = getComputedStyle(document.documentElement)
     .getPropertyValue("--radius")
     .trim();
-  const rem = parseFloat(raw);
+  const num = parseFloat(raw);
+  if (isNaN(num)) return 8;
+  if (raw.endsWith("px")) return num;
   const base = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return isNaN(rem) ? 8 : rem * (isNaN(base) ? 16 : base);
+  return num * (isNaN(base) ? 16 : base);
 }
 
 export const muiTheme = createTheme({
