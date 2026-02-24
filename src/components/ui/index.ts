@@ -6,4 +6,4 @@ export { Card, CardContent, CardHeader, CardActions } from "./Card";
 export { Badge } from "./Badge";
 export { Select, SelectItem, SelectFormControl, SelectLabel } from "./Select";
 export { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "./Dialog";
-export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./Table";
+export { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableFooter } from "./Table";
