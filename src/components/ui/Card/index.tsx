@@ -5,7 +5,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card-shadcn";
+} from "./card";
 
 export { CardContent, CardDescription, CardFooter, CardHeader, CardTitle };
 

@@ -158,15 +158,35 @@ src/
 │   ├── layout/
 │   │   └── AppLayout.tsx     # Root layout: ErrorBoundary + Outlet
 │   └── ui/                   # shadcn/ui wrappers (never import shadcn directly)
-│       ├── Button.tsx        # Wrapper → button-shadcn.tsx
-│       ├── Card.tsx          # Wrapper → card-shadcn.tsx
-│       ├── Dialog.tsx        # Wrapper → dialog-shadcn.tsx
-│       ├── Form.tsx          # Wrapper → form-shadcn.tsx
-│       ├── Input.tsx         # Wrapper → input-shadcn.tsx
-│       ├── Select.tsx        # Wrapper → select-shadcn.tsx
-│       ├── Table.tsx         # Wrapper → table-shadcn.tsx
-│       ├── Badge.tsx         # Wrapper → badge-shadcn.tsx
-│       └── index.ts          # Barrel export for all UI components
+│       ├── index.ts          # Barrel export — only import from here
+│       ├── Badge/
+│       │   ├── Badge.tsx     # Wrapper
+│       │   └── badge-shadcn.tsx  # Raw shadcn source
+│       ├── Button/
+│       │   ├── Button.tsx    # Wrapper (adds loading prop + spinner)
+│       │   ├── Button.test.tsx
+│       │   └── button-shadcn.tsx
+│       ├── Card/
+│       │   ├── index.tsx     # Wrapper (index.tsx avoids macOS case conflict)
+│       │   └── card.tsx      # Raw shadcn source
+│       ├── Dialog/
+│       │   ├── Dialog.tsx
+│       │   └── dialog-shadcn.tsx
+│       ├── Form/
+│       │   ├── Form.tsx
+│       │   └── form-shadcn.tsx
+│       ├── Input/
+│       │   ├── Input.tsx
+│       │   ├── Input.test.tsx
+│       │   └── input-shadcn.tsx
+│       ├── Label/
+│       │   └── label.tsx
+│       ├── Select/
+│       │   ├── Select.tsx
+│       │   └── select-shadcn.tsx
+│       └── Table/
+│           ├── Table.tsx
+│           └── table-shadcn.tsx
 │
 ├── lib/
 │   └── utils.ts              # cn() — clsx + tailwind-merge
