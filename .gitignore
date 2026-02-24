@@ -5,17 +5,17 @@ node_modules/
 dist/
 build/
 
-# Environment files
-.env
+# Environment secrets (non-secret .env IS committed)
 .env.local
 .env.*.local
 
 # Test coverage
 coverage/
 
-# IDE
+# IDE / tools
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 

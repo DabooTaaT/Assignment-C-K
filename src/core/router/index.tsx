@@ -7,7 +7,7 @@ import { LoginPage } from "@/features/auth/components/LoginPage";
 import { RegisterPage } from "@/features/auth/components/RegisterPage";
 import { DashboardPage } from "@/features/dashboard/components/DashboardPage";
 import { ProfilePage } from "@/features/profile/components/ProfilePage";
-import { NotFoundPage } from "@/components/ui/NotFoundPage";
+import { NotFoundPage } from "@/features/notFound/components/NotFoundPage";
 
 export const router = createBrowserRouter([
   {
