@@ -5,5 +5,5 @@ export { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, F
 export { Card, CardContent, CardHeader, CardActions } from "./Card";
 export { Badge } from "./Badge";
 export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "./Select";
-export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./Dialog";
+export { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "./Dialog";
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./Table";
