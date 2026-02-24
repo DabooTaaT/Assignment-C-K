@@ -28,3 +28,6 @@ public/mockServiceWorker.js
 
 # TypeScript
 *.tsbuildinfo
+
+# Local guideline/reference files
+guideline*.html
