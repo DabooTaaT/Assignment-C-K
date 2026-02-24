@@ -1,10 +1,11 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react";
-import { Input as ShadcnInput } from "./input";
+// src/components/ui/Input/index.tsx
+import { forwardRef } from "react";
+import MuiTextField, { type TextFieldProps } from "@mui/material/TextField";
 
-export type InputProps = ComponentPropsWithoutRef<typeof ShadcnInput>;
+export type InputProps = TextFieldProps;
 
-export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  return <ShadcnInput ref={ref} {...props} />;
-});
+export const Input = forwardRef<HTMLDivElement, InputProps>((props, ref) => (
+  <MuiTextField ref={ref} variant="outlined" fullWidth {...props} />
+));
 
 Input.displayName = "Input";
