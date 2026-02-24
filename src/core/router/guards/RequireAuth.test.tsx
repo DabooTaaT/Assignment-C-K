@@ -2,11 +2,11 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/core/router/guards/RequireAuth";
 
-jest.mock("@/features/auth/hooks/useAuth", () => ({
+jest.mock("@/features/auth/controller", () => ({
   useAuth: jest.fn(),
 }));
 
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/features/auth/controller";
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 const ProtectedPage = () => <div>Protected content</div>;

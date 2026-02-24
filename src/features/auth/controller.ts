@@ -1,7 +1,4 @@
-export interface AuthState {
-  isAuthenticated: boolean;
-  token: string | null;
-}
+import { AuthState } from "./interface";
 
 export const useAuth = (): AuthState => {
   const token = localStorage.getItem("auth_token");
