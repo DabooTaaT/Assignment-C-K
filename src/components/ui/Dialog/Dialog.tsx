@@ -6,4 +6,4 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog-shadcn";
+} from "./dialog-shadcn";

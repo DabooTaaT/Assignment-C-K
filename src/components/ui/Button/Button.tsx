@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import {
   Button as ShadcnButton,
   type ButtonProps,
-} from "@/components/ui/button-shadcn";
+} from "./button-shadcn";
 
 export interface AppButtonProps extends ButtonProps {
   loading?: boolean;
