@@ -15,7 +15,7 @@ A production-ready **React 19 + TypeScript** single-page application built with 
 | Routing | React Router v6 (`createBrowserRouter`) |
 | API Layer | Apollo Client 4 (GraphQL) |
 | Mock Layer | MSW v2 (Mock Service Worker) |
-| Styling | Tailwind CSS v3 + shadcn/ui (wrapped) |
+| Styling | Tailwind CSS v3 + Material UI (wrapped) |
 | Forms | react-hook-form + Zod |
 | i18n | i18next (English + Thai) |
 | Testing | Jest + React Testing Library + ts-jest |
@@ -113,6 +113,9 @@ src/
 │   │       ├── en/           # common.json + auth.json
 │   │       └── th/           # common.json + auth.json
 │   │
+│   ├── theme/
+│   │   └── index.ts          # createTheme: reads Tailwind CSS vars → MUI palette
+│   │
 │   ├── middleware/
 │   │   └── ErrorBoundary.tsx # React class error boundary
 │   │
@@ -157,36 +160,28 @@ src/
 ├── components/               # Shared, feature-agnostic components
 │   ├── layout/
 │   │   └── AppLayout.tsx     # Root layout: ErrorBoundary + Outlet
-│   └── ui/                   # shadcn/ui wrappers (never import shadcn directly)
+│   └── ui/                   # MUI wrappers (never import MUI directly — use @/components/ui)
 │       ├── index.ts          # Barrel export — only import from here
 │       ├── Badge/
-│       │   ├── index.tsx     # Wrapper
-│       │   └── badge.tsx     # Raw shadcn source
+│       │   └── index.tsx     # MUI Chip wrapper (label/pill style)
 │       ├── Button/
-│       │   ├── index.tsx     # Wrapper (adds loading prop + spinner)
-│       │   ├── Button.test.tsx
-│       │   └── button.tsx    # Raw shadcn source
+│       │   ├── index.tsx     # MUI Button wrapper (adds loading prop + aria-busy)
+│       │   └── Button.test.tsx
 │       ├── Card/
-│       │   ├── index.tsx     # Wrapper
-│       │   └── card.tsx      # Raw shadcn source
+│       │   └── index.tsx     # MUI Card + CardContent + CardHeader + CardActions
 │       ├── Dialog/
-│       │   ├── index.tsx     # Wrapper
-│       │   └── dialog.tsx    # Raw shadcn source
+│       │   └── index.tsx     # MUI Dialog + sub-components
 │       ├── Form/
-│       │   ├── index.tsx     # Wrapper
-│       │   └── form.tsx      # Raw shadcn source
+│       │   └── index.tsx     # react-hook-form + MUI FormControl/FormLabel/FormHelperText
 │       ├── Input/
-│       │   ├── index.tsx     # Wrapper
-│       │   ├── Input.test.tsx
-│       │   └── input.tsx     # Raw shadcn source
+│       │   ├── index.tsx     # MUI TextField wrapper
+│       │   └── Input.test.tsx
 │       ├── Label/
-│       │   └── label.tsx     # Raw shadcn source (no wrapper needed)
+│       │   └── label.tsx     # MUI FormLabel
 │       ├── Select/
-│       │   ├── index.tsx     # Wrapper
-│       │   └── select.tsx    # Raw shadcn source
+│       │   └── index.tsx     # MUI Select + MenuItem + FormControl + InputLabel
 │       └── Table/
-│           ├── index.tsx     # Wrapper
-│           └── table.tsx     # Raw shadcn source
+│           └── index.tsx     # MUI Table + sub-components
 │
 ├── lib/
 │   └── utils.ts              # cn() — clsx + tailwind-merge
@@ -235,14 +230,13 @@ Every feature follows the same four-file pattern:
 | `interface.ts` | TypeScript types and interfaces scoped to this feature. |
 | `views/` | Smaller components used only within this feature's page. |
 
-### Shared UI — shadcn/ui Wrappers
-**Rule:** Never import from shadcn directly. Always import from `@/components/ui`.
+### Shared UI — MUI Wrappers
+**Rule:** Never import from `@mui/material` directly. Always import from `@/components/ui`.
 
-Each component folder contains two files:
-- `index.tsx` — the wrapper (extend behavior here, e.g. adding a `loading` prop to Button)
-- `component.tsx` — raw shadcn source (treat as read-only)
+Each component folder contains only `index.tsx` — the wrapper that exposes MUI's native prop API.
+The MUI theme is driven by Tailwind CSS variables via `src/core/theme/index.ts`, so both systems share one palette.
 
-Using `index.tsx` as the wrapper avoids macOS case-insensitive filesystem conflicts (e.g. `Button/` can safely contain `button.tsx` because `index.tsx ≠ button.tsx`).
+Badge maps to MUI `Chip` (not MUI `Badge` which is a notification-dot component).
 
 ---
 
@@ -285,7 +279,7 @@ Test files sit alongside the code they test (`*.test.ts` / `*.test.tsx`).
 ## Key Conventions
 
 - **Path alias:** `@/` maps to `src/` — use it everywhere instead of relative paths.
-- **shadcn imports:** Always via `@/components/ui` barrel, never direct. Each component folder has `index.tsx` (wrapper) + `component.tsx` (raw shadcn).
+- **MUI imports:** Always via `@/components/ui` barrel, never direct. Each component folder has `index.tsx` wrapping the MUI component.
 - **Controller = hooks:** Feature business logic lives in `controller.ts` as custom hooks.
 - **Interface = types:** Feature-scoped TypeScript types live in `interface.ts`.
 - **Views = sub-components:** Reusable pieces inside a feature page live in `views/`.
