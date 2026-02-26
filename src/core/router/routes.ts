@@ -4,4 +4,5 @@ export const ROUTES = {
   REGISTER: "/register",
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
+  ENHANCE_HTML_ASSIGNMENT: "/enhance-html-assignment",
 } as const;

@@ -8,6 +8,7 @@ import { RegisterPage } from "@/features/auth/RegisterPage";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { ProfilePage } from "@/features/profile/ProfilePage";
 import { NotFoundPage } from "@/features/notFound/NotFoundPage";
+import { EnhanceHtmlAssignmentPage } from "@/features/enhanceHtmlAssignment/EnhanceHtmlAssignmentPage";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.HOME, element: <HomePage /> },
       { path: ROUTES.LOGIN, element: <LoginPage /> },
       { path: ROUTES.REGISTER, element: <RegisterPage /> },
+      { path: ROUTES.ENHANCE_HTML_ASSIGNMENT, element: <EnhanceHtmlAssignmentPage /> },
       {
         element: <RequireAuth />,
         children: [

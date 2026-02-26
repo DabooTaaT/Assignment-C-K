@@ -23,7 +23,7 @@ const mocks = [
 ];
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={mocks}>
     {children}
   </MockedProvider>
 );
