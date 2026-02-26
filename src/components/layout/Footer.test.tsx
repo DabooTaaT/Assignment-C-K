@@ -12,4 +12,9 @@ describe("Footer", () => {
     const footer = container.querySelector("footer");
     expect(footer).toHaveClass("bg-[#4096ff]");
   });
+
+  it("has id footer for scroll navigation", () => {
+    const { container } = render(<Footer />);
+    expect(container.querySelector("#footer")).toBeInTheDocument();
+  });
 });
