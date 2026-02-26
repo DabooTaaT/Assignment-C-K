@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ServiceCard } from "@/features/home/components/ServiceCard";
+import { ServiceCard } from "@/features/home/view/ServiceCard";
 
 const mockService = {
   id: "1",

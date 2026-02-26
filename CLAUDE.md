@@ -9,7 +9,7 @@ Feature-based MVC. See `docs/plans/2026-02-24-react-project-design.md`.
 ## Key Conventions
 
 ### Layer Rules
-- `src/features/*/components/` — View only, no business logic
+- `src/features/*/view/` — View only, no business logic
 - `src/features/*/hooks/` — Controller: orchestrate services, manage state
 - `src/features/*/services/` — Model: business logic, data transforms
 - `src/core/network/` — Apollo Client + Links (never import in features directly)
@@ -31,7 +31,7 @@ ComponentName/
 ```
 Import via the folder name (resolves through `index.ts`):
 ```ts
-import { ComponentName } from "@/features/home/components/ComponentName"
+import { ComponentName } from "@/features/home/view/ComponentName"
 import { Button } from "@/components/ui/Button"
 ```
 

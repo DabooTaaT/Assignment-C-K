@@ -1,7 +1,7 @@
 import { useHome } from "@/features/home/hooks/controller";
-import { HeroSection } from "@/features/home/components/HeroSection";
-import { ProductSection } from "@/features/home/components/ProductSection";
-import { ServiceSection } from "@/features/home/components/ServiceSection";
+import { HeroSection } from "@/features/home/view/HeroSection";
+import { ProductSection } from "@/features/home/view/ProductSection";
+import { ServiceSection } from "@/features/home/view/ServiceSection";
 
 export const HomePage = () => {
   const { products, services, loading, error } = useHome();

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ProductCard } from "@/features/home/components/ProductCard";
+import { ProductCard } from "@/features/home/view/ProductCard";
 
 const mockProduct = {
   id: "1",

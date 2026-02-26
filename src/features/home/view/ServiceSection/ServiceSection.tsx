@@ -1,6 +1,6 @@
 // src/features/home/components/ServiceSection.tsx
 import type { Service } from "@/features/home/interface";
-import { ServiceCard } from "@/features/home/components/ServiceCard";
+import { ServiceCard } from "@/features/home/view/ServiceCard";
 
 interface ServiceSectionProps {
   services: Service[];

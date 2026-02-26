@@ -1,5 +1,5 @@
 import type { Product } from "@/features/home/interface";
-import { ProductCard } from "@/features/home/components/ProductCard";
+import { ProductCard } from "@/features/home/view/ProductCard";
 
 interface ProductSectionProps {
   products: Product[];

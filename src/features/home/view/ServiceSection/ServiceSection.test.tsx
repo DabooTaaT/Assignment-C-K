@@ -1,6 +1,6 @@
 // src/features/home/components/ServiceSection.test.tsx
 import { render, screen } from "@testing-library/react";
-import { ServiceSection } from "@/features/home/components/ServiceSection";
+import { ServiceSection } from "@/features/home/view/ServiceSection";
 
 const mockServices = [
   { id: "1", name: "Service A", detail: "Detail A", imageUrl: "" },
