@@ -1,0 +1,21 @@
+{
+  "header": {
+    "logo": "BrandName",
+    "nav": {
+      "home": "Home",
+      "product": "Product",
+      "aboutUs": "About Us",
+      "contactUs": "Contact Us"
+    }
+  },
+  "products": {
+    "sectionTitle": "Featured Products"
+  },
+  "services": {
+    "sectionTitle": "Our Services",
+    "learnMore": "Learn More"
+  },
+  "footer": {
+    "copyright": "© 2026 BrandName. All rights reserved."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "header": {
+    "logo": "BrandName",
+    "nav": {
+      "home": "หน้าแรก",
+      "product": "ผลิตภัณฑ์",
+      "aboutUs": "เกี่ยวกับเรา",
+      "contactUs": "ติดต่อเรา"
+    }
+  },
+  "products": {
+    "sectionTitle": "สินค้าแนะนำ"
+  },
+  "services": {
+    "sectionTitle": "บริการของเรา",
+    "learnMore": "เรียนรู้เพิ่มเติม"
+  },
+  "footer": {
+    "copyright": "© 2026 BrandName สงวนลิขสิทธิ์"
+  }
+}
