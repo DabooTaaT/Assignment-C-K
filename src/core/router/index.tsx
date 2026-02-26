@@ -17,7 +17,6 @@ export const router = createBrowserRouter([
       { path: ROUTES.HOME, element: <HomePage /> },
       { path: ROUTES.LOGIN, element: <LoginPage /> },
       { path: ROUTES.REGISTER, element: <RegisterPage /> },
-      { path: ROUTES.ENHANCE_HTML_ASSIGNMENT, element: <EnhanceHtmlAssignmentPage /> },
       {
         element: <RequireAuth />,
         children: [
@@ -28,4 +27,5 @@ export const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage /> },
     ],
   },
+  { path: ROUTES.ENHANCE_HTML_ASSIGNMENT, element: <EnhanceHtmlAssignmentPage /> },
 ]);
