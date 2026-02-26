@@ -1,6 +1,6 @@
 // src/features/home/components/HeroSection.test.tsx
 import { render } from "@testing-library/react";
-import { HeroSection } from "@/features/home/components/HeroSection";
+import { HeroSection } from "@/features/home/components/HeroSection/HeroSection";
 
 describe("HeroSection", () => {
   it("renders with the correct section id", () => {

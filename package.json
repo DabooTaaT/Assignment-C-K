@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
     "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -34,6 +36,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
+    "@biomejs/biome": "2.4.4",
     "@eslint/js": "^9.39.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
