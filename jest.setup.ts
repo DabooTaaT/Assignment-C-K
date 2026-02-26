@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import "@/core/i18n";
 import "whatwg-fetch";
 import { TextDecoder, TextEncoder } from "util";
 import { ReadableStream, TransformStream, WritableStream } from "stream/web";

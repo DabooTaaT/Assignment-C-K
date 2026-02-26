@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const NAV_ITEMS = [
-  { label: "HOME", sectionId: "hero" },
-  { label: "PRODUCT", sectionId: "products" },
-  { label: "ABOUT US", sectionId: "services" },
-  { label: "CONTACT US", sectionId: "footer" },
+  { key: "home" as const, sectionId: "hero" },
+  { key: "product" as const, sectionId: "products" },
+  { key: "aboutUs" as const, sectionId: "services" },
+  { key: "contactUs" as const, sectionId: "footer" },
 ];
 
 export const Header = () => {
+  const { t } = useTranslation("common");
   const [menuOpen, setMenuOpen] = useState(false);
 
   const scrollTo = (sectionId: string) => {
@@ -19,7 +21,7 @@ export const Header = () => {
     <header>
       {/* Top bar */}
       <div className="bg-[#4096ff] text-white px-5 py-4 flex justify-between items-center text-sm uppercase">
-        <div>NAME PAGE</div>
+        <div>{t("nav.siteName")}</div>
         <button
           className="md:hidden text-xl cursor-pointer bg-transparent border-none text-white"
           aria-label="Toggle menu"
@@ -41,7 +43,7 @@ export const Header = () => {
               onClick={() => scrollTo(item.sectionId)}
               className="bg-transparent border-none text-white cursor-pointer hover:underline"
             >
-              {item.label}
+              {t(`nav.${item.key}`)}
             </button>
             {i < NAV_ITEMS.length - 1 && <span className="mx-2.5">|</span>}
           </span>

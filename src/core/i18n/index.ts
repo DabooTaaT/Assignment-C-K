@@ -4,8 +4,10 @@ import * as LanguageDetectorModule from "i18next-browser-languagedetector";
 
 import enCommon from "./locales/en/common.json";
 import enAuth from "./locales/en/auth.json";
+import enHome from "./locales/en/home.json";
 import thCommon from "./locales/th/common.json";
 import thAuth from "./locales/th/auth.json";
+import thHome from "./locales/th/home.json";
 
 const i18n = createInstance();
 const LanguageDetector =
@@ -19,10 +21,12 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
     en: {
       common: unwrap(enCommon),
       auth: unwrap(enAuth),
+      home: unwrap(enHome),
     },
     th: {
       common: unwrap(thCommon),
       auth: unwrap(thAuth),
+      home: unwrap(thHome),
     },
   },
   fallbackLng: "en",

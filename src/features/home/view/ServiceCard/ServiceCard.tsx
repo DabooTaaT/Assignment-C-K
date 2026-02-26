@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/Button";
 import type { Service } from "@/features/home/interface";
 
@@ -15,26 +16,29 @@ interface ServiceCardProps {
   service: Service;
 }
 
-export const ServiceCard = ({ service }: ServiceCardProps) => (
-  <div className="flex flex-col bg-white border border-[#c9defc] shadow-sm">
-    <div className="bg-[#8c8c8c] h-[150px] md:h-[180px] flex justify-center items-center">
-      <ImagePlaceholder />
+export const ServiceCard = ({ service }: ServiceCardProps) => {
+  const { t } = useTranslation("home");
+  return (
+    <div className="flex flex-col bg-white border border-[#c9defc] shadow-sm">
+      <div className="bg-[#8c8c8c] h-[150px] md:h-[180px] flex justify-center items-center">
+        <ImagePlaceholder />
+      </div>
+      <div className="p-5 flex-1">
+        <h3 className="text-lg text-[#333] mb-1">{service.name}</h3>
+        <p className="text-sm text-[#4096ff]">{service.detail}</p>
+      </div>
+      <Button
+        variant="contained"
+        fullWidth
+        sx={{
+          backgroundColor: "#4096ff",
+          borderRadius: 0,
+          textTransform: "uppercase",
+          "&:hover": { backgroundColor: "#3e7ced" },
+        }}
+      >
+        {t("cards.more")}
+      </Button>
     </div>
-    <div className="p-5 flex-1">
-      <h3 className="text-lg text-[#333] mb-1">{service.name}</h3>
-      <p className="text-sm text-[#4096ff]">{service.detail}</p>
-    </div>
-    <Button
-      variant="contained"
-      fullWidth
-      sx={{
-        backgroundColor: "#4096ff",
-        borderRadius: 0,
-        textTransform: "uppercase",
-        "&:hover": { backgroundColor: "#3e7ced" },
-      }}
-    >
-      MORE
-    </Button>
-  </div>
-);
+  );
+};

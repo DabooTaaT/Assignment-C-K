@@ -8,5 +8,15 @@
   "delete": "ลบ",
   "confirm": "ยืนยัน",
   "back": "กลับ",
-  "notFound": "ไม่พบหน้านี้"
+  "notFound": "ไม่พบหน้านี้",
+  "nav": {
+    "siteName": "ชื่อเว็บไซต์",
+    "home": "หน้าหลัก",
+    "product": "สินค้า",
+    "aboutUs": "เกี่ยวกับเรา",
+    "contactUs": "ติดต่อเรา"
+  },
+  "footer": {
+    "copyright": "ลิขสิทธิ์"
+  }
 }

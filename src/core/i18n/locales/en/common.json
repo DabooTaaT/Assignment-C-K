@@ -8,5 +8,15 @@
   "delete": "Delete",
   "confirm": "Confirm",
   "back": "Back",
-  "notFound": "Page not found"
+  "notFound": "Page not found",
+  "nav": {
+    "siteName": "NAME PAGE",
+    "home": "HOME",
+    "product": "PRODUCT",
+    "aboutUs": "ABOUT US",
+    "contactUs": "CONTACT US"
+  },
+  "footer": {
+    "copyright": "Copyright"
+  }
 }

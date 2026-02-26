@@ -45,9 +45,12 @@ import { Button } from "@/components/ui/Button"
 - MSW handlers live in `src/core/data/mocks/handlers/`
 
 ### i18n
-- `useTranslation('common')` for shared strings
+- `useTranslation('common')` for shared strings (nav, footer, loading, error)
 - `useTranslation('auth')` inside auth feature
-- Add new namespaces in `src/core/i18n/locales/en/` and `src/core/i18n/locales/th/`
+- `useTranslation('home')` inside home feature (sections, cards)
+- Register new namespaces in `src/core/i18n/index.ts` (import JSON + add to resources)
+- Add locale files in `src/core/i18n/locales/en/` and `src/core/i18n/locales/th/`
+- `jest.setup.ts` imports `@/core/i18n` so translations are available in all tests
 
 ## Commands
 - `npm run dev` — start dev server
