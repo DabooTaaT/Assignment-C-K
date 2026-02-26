@@ -21,7 +21,7 @@ const mocks = [
 
 const renderHomePage = () =>
   render(
-    <MockedProvider mocks={mocks} addTypename={false}>
+    <MockedProvider mocks={mocks}>
       <HomePage />
     </MockedProvider>
   );
