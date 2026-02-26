@@ -1,13 +1,32 @@
-# Enhance HTML Assignment — Feature Design
+# Enhance HTML Assignment — Feature Design (Second Page)
 
 **Date:** 2026-02-26
 **Route:** `/enhance-html-assignment`
 **Auth:** Public (no authentication required)
 **Guideline:** `guideline-enhanced.html` (root of repo)
+**Relation:** Second page. First page is `/` (see `2026-02-26-firstpage-design.md`).
 
 ## Overview
 
 Convert the static HTML guideline into a React feature page following the project's MVC conventions. The page is a landing/marketing page with 5 sections: Header, Hero, Products, Services, Footer. Product and service data comes from a GraphQL API backed by MSW mocks.
+
+## Layout Conflict with First Page
+
+The first page design (`2026-02-26-firstpage-design.md`) plans to add a shared Header/Footer to `AppLayout`. However, this page has a completely **different** header/footer design (white/transparent vs blue `#4096ff`). To avoid visual conflicts:
+
+- `AppLayout` stays minimal (ErrorBoundary + Outlet only)
+- The first page's shared Header/Footer should use a nested route layout (not AppLayout)
+- This page includes its own local Header/Footer in `views/`
+
+### No Duplicate Paths or Operations
+
+| Concern | First Page (`/`) | This Page (`/enhance-html-assignment`) |
+|---------|-------------------|----------------------------------------|
+| Route | `/` | `/enhance-html-assignment` |
+| GraphQL op | `GetHomePageData` | `GetProducts`, `GetServices` |
+| Data fields | `name`, `detail` | `title`, `description` |
+| MSW handler | `homeHandlers` | `enhanceHtmlAssignmentHandlers` |
+| i18n ns | `common`, `auth` | `enhanceHtml` |
 
 ## Feature Structure
 
